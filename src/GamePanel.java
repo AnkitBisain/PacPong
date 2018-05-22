@@ -38,10 +38,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		stringFont = new Font("Arial", Font.PLAIN, 24);
 		bar = new Bar(25, 300, 25, 150);
 		ball = new Ball(50, 350, 50, 50);
-		pac = new PacMan(380, 325, 80, 80);
+		pac = new PacMan(380, 325, 60, 60);
 		obj = new ObjectManager(bar);
-		xSpeedBall = 5;
-		ySpeedBall = 5;
+		xSpeedBall = 4;
+		ySpeedBall = 6;
 		timePassed = 0;
 		try {
 
@@ -71,15 +71,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	void updateGameState() {
 		timePassed += 1;
-		System.out.println(timePassed);
 		obj.update();
 		if (obj.bar.isAlive == false) {
 			currentState = END_STATE;
 		}
-		double xChange = 3 * (ball.x - pac.x)
-				/ (Math.sqrt((pac.x - ball.x) * (pac.x - ball.x) + (pac.y - ball.y) * (pac.y - ball.y)));
-		double yChange = 3 * (ball.y - pac.y)
-				/ (Math.sqrt((pac.x - ball.x) * (pac.x - ball.x) + (pac.y - ball.y) * (pac.y - ball.y)));
+		double xChange = 2.5 * (ball.x - pac.x - 15) / (Math
+				.sqrt((pac.x - ball.x + 15) * (pac.x - ball.x + 15) + (pac.y - ball.y + 15) * (pac.y - ball.y + 15)));
+		double yChange = 2.5 * (ball.y - pac.y - 15) / (Math
+				.sqrt((pac.x - ball.x + 15) * (pac.x - ball.x + 15) + (pac.y - ball.y + 15) * (pac.y - ball.y + 15)));
 		pac.x += Math.round(xChange);
 		pac.y += Math.round(yChange);
 		if (ball.x >= 960) {
@@ -100,7 +99,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				xSpeedBall = (int) Math.round(Math.sqrt(49 - ySpeedBall * ySpeedBall));
 			}
 		}
-		if ((ball.x - pac.x - 25) * (ball.x - pac.x - 25) + (ball.y - pac.y - 25) * (ball.y - pac.y - 25) <= 3500) {
+		if ((ball.x - pac.x - 15) * (ball.x - pac.x - 15) + (ball.y - pac.y - 15) * (ball.y - pac.y - 15) <= 2500) {
 			currentState = END_STATE;
 		}
 		if (ball.x <= 0) {
@@ -175,6 +174,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 			} else {
 				currentState++;
+				if (currentState == GAME_STATE) {
+
+					bar.x = 25;
+					bar.y = 300;
+					ball.x = 50;
+					ball.y = 350;
+					pac.x = 380;
+					pac.y = 325;
+					timePassed = 0;
+					xSpeedBall = 5;
+					ySpeedBall = 5;
+				}
 			}
 			System.out.println(currentState);
 
