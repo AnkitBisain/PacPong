@@ -126,6 +126,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		obj.draw(g);
 		ball.draw(g);
 		pac.draw(g);
+		g.setColor(Color.YELLOW);
+		g.setFont(stringFont);
+		g.drawString("Time Passed: " + (int) Math.round(timePassed / 30), 50, 50);
 	}
 
 	void drawEndState(Graphics g) {
