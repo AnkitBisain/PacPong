@@ -1,4 +1,5 @@
 
+import java.applet.AudioClip;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -10,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JApplet;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -27,6 +29,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	ObjectManager obj;
 	int xSpeedBall;
 	int ySpeedBall;
+	double pacSpeed;
 	double timePassed;
 	public static BufferedImage alienImg;
 	public static BufferedImage rocketImg;
@@ -43,6 +46,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		xSpeedBall = 4;
 		ySpeedBall = 6;
 		timePassed = 0;
+		pacSpeed = 2.5;
 		try {
 
 			alienImg = ImageIO.read(this.getClass().getResourceAsStream("alien.png"));
@@ -70,7 +74,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 
 	void updateGameState() {
+		pacSpeed += 1 / 900;
 		timePassed += 1;
+		if (timePassed % 130 == 2) {
+			playSound("Pac-Man Waka Waka Seamless Loop.wav");
+		}
 		obj.update();
 		if (obj.bar.isAlive == false) {
 			currentState = END_STATE;
@@ -97,6 +105,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				ySpeedBall = (int) Math.round(7 * (ball.y - bar.gety() - 50)
 						/ Math.sqrt(1600 + (ball.y - bar.gety() - 50) * (ball.y - bar.gety() - 50)));
 				xSpeedBall = (int) Math.round(Math.sqrt(49 - ySpeedBall * ySpeedBall));
+				playSound("Pong Sound Effect.wav");
 			}
 		}
 		if ((ball.x - pac.x - 15) * (ball.x - pac.x - 15) + (ball.y - pac.y - 15) * (ball.y - pac.y - 15) <= 2500) {
@@ -117,7 +126,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		g.setColor(Color.YELLOW);
 		g.drawString("PacPong", 400, 200);
 		g.setFont(stringFont);
-		g.drawString("Press ENTER to start", 390, 500);
+		g.drawString("Like Pong except", 395, 330);
+		g.drawString("Keep ball from pacman", 365, 390);
+		g.drawString("Up & Down arrows control bar", 335, 450);
+		g.drawString("Press ENTER to start", 375, 500);
 	}
 
 	void drawGameState(Graphics g) {
@@ -162,6 +174,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			updateEndState();
 		}
 		repaint();
+	}
+
+	private void playSound(String fileName) {
+		AudioClip sound = JApplet.newAudioClip(getClass().getResource(fileName));
+		sound.play();
 	}
 
 	@Override
