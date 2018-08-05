@@ -31,22 +31,24 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	int ySpeedBall;
 	double pacSpeed;
 	double timePassed;
+	boolean moveUp;
+	boolean moveDown;
 	public static BufferedImage alienImg;
 	public static BufferedImage rocketImg;
 	public static BufferedImage bulletImg;
 
 	public GamePanel() {
-		timer = new Timer(1000 / 30, this);
+		timer = new Timer(1000 / 60, this);
 		titleFont = new Font("Arial", Font.PLAIN, 48);
 		stringFont = new Font("Arial", Font.PLAIN, 24);
 		bar = new Bar(25, 300, 25, 150);
 		ball = new Ball(50, 350, 50, 50);
 		pac = new PacMan(380, 325, 60, 60);
 		obj = new ObjectManager(bar);
-		xSpeedBall = 4;
-		ySpeedBall = 6;
+		xSpeedBall = 1;
+		ySpeedBall = 0;
 		timePassed = 0;
-		pacSpeed = 2.5;
+		pacSpeed = 1.25;
 		try {
 
 			alienImg = ImageIO.read(this.getClass().getResourceAsStream("alien.png"));
@@ -76,35 +78,35 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	void updateGameState() {
 		pacSpeed += 1 / 900;
 		timePassed += 1;
-		if (timePassed % 130 == 2) {
+		if (timePassed % 260 == 2) {
 			playSound("Pac-Man Waka Waka Seamless Loop.wav");
 		}
 		obj.update();
 		if (obj.bar.isAlive == false) {
 			currentState = END_STATE;
 		}
-		double xChange = 2.5 * (ball.x - pac.x - 15) / (Math
+		double xChange = pacSpeed * (ball.x - pac.x - 15) / (Math
 				.sqrt((pac.x - ball.x + 15) * (pac.x - ball.x + 15) + (pac.y - ball.y + 15) * (pac.y - ball.y + 15)));
-		double yChange = 2.5 * (ball.y - pac.y - 15) / (Math
+		double yChange = pacSpeed * (ball.y - pac.y - 15) / (Math
 				.sqrt((pac.x - ball.x + 15) * (pac.x - ball.x + 15) + (pac.y - ball.y + 15) * (pac.y - ball.y + 15)));
 		pac.x += Math.round(xChange);
 		pac.y += Math.round(yChange);
-		if (ball.x >= 960) {
+		if (ball.x >= 940) {
 			xSpeedBall = -xSpeedBall;
 		}
-		if (ball.y <= 0) {
+		if (ball.y <= 5) {
 			ySpeedBall = -ySpeedBall;
 		}
-		if (ball.y >= 725) {
+		if (ball.y >= 720) {
 			ySpeedBall = -ySpeedBall;
 		}
 		ball.x += xSpeedBall;
 		ball.y += ySpeedBall;
 		if (ball.x == 50) {
-			if ((ball.y - bar.gety() - 50) * (ball.y - bar.gety() - 50) <= 10000) {
-				ySpeedBall = (int) Math.round(7 * (ball.y - bar.gety() - 50)
+			if ((ball.y - bar.gety() - 50) * (ball.y - bar.gety() - 50) <= 16000) {
+				ySpeedBall = (int) Math.round(3.5 * (ball.y - bar.gety() - 50)
 						/ Math.sqrt(1600 + (ball.y - bar.gety() - 50) * (ball.y - bar.gety() - 50)));
-				xSpeedBall = (int) Math.round(Math.sqrt(49 - ySpeedBall * ySpeedBall));
+				xSpeedBall = (int) Math.round(Math.sqrt(12.25 - ySpeedBall * ySpeedBall));
 				playSound("Pong Sound Effect.wav");
 			}
 		}
@@ -113,6 +115,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		}
 		if (ball.x <= 0) {
 			currentState = END_STATE;
+		}
+		if(moveUp == true) {
+			bar.y -= bar.speed;
+		}
+		if(moveDown == true) {
+			bar.y += bar.speed;
 		}
 	}
 
@@ -133,14 +141,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 
 	void drawGameState(Graphics g) {
-		g.setColor(Color.BLACK);
+		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, PacPong.width, PacPong.height);
+		g.setColor(Color.BLACK);
+		g.fillRect(0,10,PacPong.width-10, PacPong.height -45);
 		obj.draw(g);
 		ball.draw(g);
 		pac.draw(g);
 		g.setColor(Color.YELLOW);
 		g.setFont(stringFont);
-		g.drawString("Time Passed: " + (int) Math.round(timePassed / 30), 50, 50);
+		g.drawString("Time Passed: " + (int) Math.round(timePassed / 60), 50, 50);
 	}
 
 	void drawEndState(Graphics g) {
@@ -150,7 +160,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		g.setFont(titleFont);
 		g.drawString("Game Over", 390, 200);
 		g.setFont(stringFont);
-		g.drawString("You survived for " + (int) Math.round(timePassed / 30) + " seconds", 380, 500);
+		g.drawString("You survived for " + (int) Math.round(timePassed / 60) + " seconds", 380, 500);
 		g.drawString("Press ENTER to restart", 380, 650);
 	}
 
@@ -203,8 +213,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 					pac.x = 380;
 					pac.y = 325;
 					timePassed = 0;
-					xSpeedBall = 5;
-					ySpeedBall = 5;
+					xSpeedBall = 2;
+					ySpeedBall = 3;
+					moveUp = false;
+					moveDown = false;
 				}
 			}
 			System.out.println(currentState);
@@ -212,18 +224,27 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		}
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 			if (currentState == GAME_STATE) {
-				bar.y += -bar.speed;
+				moveUp = true;
 			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 			if (currentState == GAME_STATE) {
-				bar.y += bar.speed;
+				moveDown = true;
 			}
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			if (currentState == GAME_STATE) {
+				moveUp = false;
+			}
+		}
+		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			if (currentState == GAME_STATE) {
+				moveDown = false;
+			}
+		}
 	}
 }

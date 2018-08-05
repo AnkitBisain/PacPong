@@ -6,7 +6,7 @@ public class Bar extends GameObject {
 
 	public Bar(int x, int y, int width, int height) {
 		super(x, y, width, height);
-		speed = 8;
+		speed = 2;
 		// TODO Auto-generated constructor stub
 	}
 
