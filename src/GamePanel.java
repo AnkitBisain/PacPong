@@ -38,7 +38,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	public static BufferedImage bulletImg;
 
 	public GamePanel() {
-		timer = new Timer(1000 / 60, this);
+		timer = new Timer(1000 / 120, this);
 		titleFont = new Font("Arial", Font.PLAIN, 48);
 		stringFont = new Font("Arial", Font.PLAIN, 24);
 		bar = new Bar(25, 300, 25, 150);
@@ -76,9 +76,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 
 	void updateGameState() {
-		pacSpeed += 1 / 900;
+		pacSpeed += 1 / 1800;
 		timePassed += 1;
-		if (timePassed % 260 == 2) {
+		if (timePassed % 520 == 2) {
 			playSound("Pac-Man Waka Waka Seamless Loop.wav");
 		}
 		obj.update();
@@ -150,7 +150,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		pac.draw(g);
 		g.setColor(Color.YELLOW);
 		g.setFont(stringFont);
-		g.drawString("Time Passed: " + (int) Math.round(timePassed / 60), 50, 50);
+		g.drawString("Time Passed: " + (int) Math.round(timePassed / 120), 50, 50);
 	}
 
 	void drawEndState(Graphics g) {
